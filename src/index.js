@@ -1,13 +1,21 @@
 const { isObject } = require('util');
 
+const PORT = 4000
 const app = require('express')();
 const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+// const io = require('socket.io')(http);
 
-const PORT = 4000
 
 io.on('connection', function(socket) {
-  console.log('a user connected');
+  socket.on("new-op", function(data) {
+    io.emit("new-remote-op", data);
+  })
 });
 
 http.listen(PORT, function() {
